@@ -76,10 +76,10 @@ Il modulo usa **Netlify Forms**, che Netlify rileva da solo al primo deploy graz
 4. Salva e fai un **invio di prova** dal sito pubblicato.
 
 Cosa arriva nell'email:
-- oggetto «Nuova richiesta di preventivo dal sito EERIS»;
+- oggetto «Nuova richiesta di preventivo EER-… dal sito EERIS», con il codice richiesta;
 - nome, email, telefono, tipologie, descrizione e consenso;
 - il campo `configurazione_infissi` con il riepilogo degli infissi (materiale, tipologia, colore, misure, quantità);
-- le foto come link per scaricarle (`foto_1` … `foto_5`).
+- il campo `codice_richiesta` (es. EER-261114-K7Q4), che il cliente vede dopo l'invio e può citare quando vi ricontatta;
 
 Tutte le richieste restano consultabili anche in **Forms → preventivo** nel pannello Netlify.
 
@@ -89,8 +89,9 @@ Tutte le richieste restano consultabili anche in **Forms → preventivo** nel pa
 - verifica che la notifica sia impostata sul modulo `preventivo` e sull'indirizzo corretto.
 
 **Limiti da conoscere:**
-- I piani gratuiti di Netlify hanno un limite mensile di invii e di spazio per gli allegati. Controlla i limiti aggiornati nella pagina *Usage* del pannello o su netlify.com/pricing.
-- Le foto vengono ridimensionate automaticamente nel browser (lato massimo 2000 px) prima dell'invio, per stare nel limite di circa 8 MB per richiesta.
+- Sui piani Netlify a crediti (il nostro) gli invii dei moduli sono gratuiti e illimitati; se però l'account supera i crediti mensili il sito va in pausa e non riceve richieste. Controlla ogni tanto *Usage* nel pannello.
+- Il modulo **non** accetta foto (scelta privacy): il cliente le manda dopo su WhatsApp o a info@eerisinfissi.it citando il codice richiesta.
+- **Conservazione 12 mesi**: un'attività pianificata di Claude cancella ogni mese da Netlify le richieste più vecchie di 12 mesi. Le email di notifica in info@ vanno cancellate a mano con la stessa scadenza (vedi Privacy Policy).
 - Sono protette dallo spam con un campo nascosto (honeypot) e con il filtro antispam di Netlify.
 
 **Cambiare l'indirizzo email in futuro:** basta modificare la notifica al punto 2. Non serve toccare il codice.
@@ -113,5 +114,5 @@ Dopo aver acquistato il dominio, per esempio `eeris.it`:
 
 ## 6. Da completare prima della pubblicazione
 
-- **Privacy Policy** (`privacy-policy.html`): completa i campi evidenziati in giallo `[DA COMPLETARE: …]`, cioè sede, partita IVA, email per la privacy e periodo di conservazione. Fai verificare il testo da un consulente se possibile.
+- **Privacy Policy** (`privacy-policy.html`): completata (sede, P.IVA, email, conservazione 12 mesi). Fai verificare il testo da un consulente se possibile.
 - Le foto della galleria sono segnalate come «a scopo illustrativo»: quando avrai le foto dei tuoi lavori, sostituiscile e rimuovi la nota da `index.html`.

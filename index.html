@@ -406,7 +406,7 @@
             <p class="lead">Raccontaci cosa vuoi realizzare: ti ricontatteremo per approfondire la richiesta e proporti la soluzione più adatta.</p>
           </div>
           <ol class="steps reveal">
-            <li class="step"><span class="step-number" aria-hidden="true">01</span><div><h3 class="title title-sm">Compila il modulo</h3><p class="small">Bastano pochi minuti: descrivi il lavoro e, se vuoi, allega qualche foto.</p></div></li>
+            <li class="step"><span class="step-number" aria-hidden="true">01</span><div><h3 class="title title-sm">Compila il modulo</h3><p class="small">Bastano pochi minuti: indicaci di cosa hai bisogno. Le foto puoi mandarcele dopo, su WhatsApp o via email.</p></div></li>
             <li class="step"><span class="step-number" aria-hidden="true">02</span><div><h3 class="title title-sm">Ti ricontattiamo</h3><p class="small">Valutiamo la richiesta e ti chiamiamo per i dettagli.</p></div></li>
             <li class="step"><span class="step-number" aria-hidden="true">03</span><div><h3 class="title title-sm">Definiamo la soluzione</h3><p class="small">Ti proponiamo la soluzione più adatta alle tue esigenze.</p></div></li>
           </ol>
@@ -422,10 +422,11 @@
             grazie all'attributo data-netlify="true". Le notifiche email verso
             info@eerisinfissi.it si attivano dal pannello Netlify (vedi README.md).
           -->
-          <form class="quote-form" id="quote-form" name="preventivo" method="POST" action="/grazie" enctype="multipart/form-data"
+          <form class="quote-form" id="quote-form" name="preventivo" method="POST" action="/grazie"
                 data-netlify="true" netlify-honeypot="bot-field" novalidate>
             <input type="hidden" name="form-name" value="preventivo">
-            <input type="hidden" name="subject" value="Nuova richiesta di preventivo dal sito EERIS">
+            <input type="hidden" name="subject" id="f-subject" value="Nuova richiesta di preventivo dal sito EERIS">
+            <input type="hidden" name="codice_richiesta" id="f-codice">
             <p class="visually-hidden" aria-hidden="true">
               <label>Non compilare questo campo <input type="text" name="bot-field" tabindex="-1" autocomplete="off"></label>
             </p>
@@ -446,24 +447,6 @@
                 <label class="label" for="f-telefono">Numero di telefono<span class="req" aria-hidden="true"> *</span></label>
                 <input class="control" id="f-telefono" name="telefono" type="tel" inputmode="tel" placeholder="333 123 4567" autocomplete="tel" required aria-describedby="f-telefono-err">
                 <p class="error" id="f-telefono-err" hidden></p>
-              </div>
-            </div>
-
-            <div class="field">
-              <span class="label" id="f-foto-label">Fotografie del lavoro da realizzare (facoltative)</span>
-              <div class="drop" id="drop">
-                <input type="file" id="f-foto" class="visually-hidden" accept="image/*,.heic,.heif" multiple aria-labelledby="f-foto-label" aria-describedby="f-foto-hint">
-                <span class="drop-icon" aria-hidden="true"><svg class="icon icon-lg"><use href="#i-image"/></svg></span>
-                <div>
-                  <button type="button" class="drop-button" id="drop-button">Scegli le foto o trascinale qui</button>
-                  <p class="hint" id="f-foto-hint">Immagini JPG, PNG o HEIC. Fino a 5 foto, massimo 8 MB ciascuna.</p>
-                </div>
-              </div>
-              <ul class="files" id="file-list" aria-live="polite"></ul>
-              <p class="error" id="f-foto-err" hidden></p>
-              <!-- Campi file letti da Netlify: uno per foto -->
-              <div hidden>
-                <input type="file" name="foto_1" tabindex="-1"><input type="file" name="foto_2" tabindex="-1"><input type="file" name="foto_3" tabindex="-1"><input type="file" name="foto_4" tabindex="-1"><input type="file" name="foto_5" tabindex="-1">
               </div>
             </div>
 
@@ -488,11 +471,14 @@
             <div id="configurators"></div>
 
             <div class="field">
-              <label class="label" for="f-descrizione">Descrizione dettagliata del lavoro richiesto<span class="req" aria-hidden="true"> *</span></label>
-              <textarea class="control control-textarea" id="f-descrizione" name="descrizione" rows="6" required aria-describedby="f-descrizione-err"
+              <label class="label" for="f-descrizione">Descrizione del lavoro richiesto (facoltativa)</label>
+              <textarea class="control control-textarea" id="f-descrizione" name="descrizione" rows="6" aria-describedby="f-descrizione-err"
                         placeholder="Descrivi il lavoro: tipo di intervento, misure indicative, materiali preferiti, luogo e tempi desiderati."></textarea>
               <p class="error" id="f-descrizione-err" hidden></p>
             </div>
+
+            <p class="form-tip"><svg class="icon icon-accent" aria-hidden="true"><use href="#i-image"/></svg>
+              <span>Hai delle foto del lavoro? Dopo l'invio riceverai un codice richiesta: mandaci le foto su <a href="https://wa.me/393382906931" target="_blank" rel="noopener">WhatsApp</a> o a <a href="mailto:info@eerisinfissi.it">info@eerisinfissi.it</a> indicando il codice.</span></p>
 
             <div class="field">
               <div class="consent">
@@ -516,6 +502,12 @@
             <span class="badge badge-accent" aria-hidden="true"><svg class="icon icon-xl"><use href="#i-check"/></svg></span>
             <h3 class="title title-md">Grazie per aver contattato EERIS!</h3>
             <p class="lead">Abbiamo ricevuto la tua richiesta. Ti ricontatteremo al più presto.</p>
+            <div class="request-code" id="request-code-box" hidden>
+              <p class="request-code-label">Il tuo codice richiesta</p>
+              <p class="request-code-value" id="request-code"></p>
+              <p class="small">Annotalo: citalo quando ci chiami, ci scrivi su WhatsApp o all'indirizzo <a href="mailto:info@eerisinfissi.it">info@eerisinfissi.it</a> per chiedere informazioni, aggiungere qualcosa che hai dimenticato o mandarci le foto.</p>
+              <a class="btn btn-outline btn-sm" id="request-code-wa" href="https://wa.me/393382906931" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>Scrivici su WhatsApp con il codice</a>
+            </div>
             <p class="dev-note" id="dev-note" hidden>Anteprima locale: la richiesta <strong>non</strong> è stata inviata. L'invio reale funziona sul sito pubblicato su Netlify.</p>
             <button type="button" class="btn btn-outline" id="form-reset">Invia un'altra richiesta</button>
           </div>
@@ -577,11 +569,12 @@
           <ul class="footer-list">
             <li><a href="tel:+393382906931" class="text-link text-link-sm"><svg class="icon icon-accent" aria-hidden="true"><use href="#i-phone"/></svg><span>338 290 6931</span></a></li>
             <li><a href="https://wa.me/393382906931" class="text-link text-link-sm" target="_blank" rel="noopener"><svg class="icon icon-accent" aria-hidden="true"><use href="#i-whatsapp"/></svg><span>WhatsApp</span></a></li>
+            <li><a href="mailto:info@eerisinfissi.it" class="text-link text-link-sm"><span>info@eerisinfissi.it</span></a></li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
-        <p class="small muted">© <span data-year>2026</span> EERIS di Andrea Caccavale. Tutti i diritti riservati.</p>
+        <p class="small muted">© <span data-year>2026</span> EERIS di Andrea Caccavale · Via Stazione, 29 · 82011 Airola (BN) · P.IVA 01257410629 · <a href="mailto:info@eerisinfissi.it">info@eerisinfissi.it</a></p>
         <ul class="legal-links">
           <li><a href="/privacy-policy" class="text-link text-link-sm">Privacy Policy</a></li>
           <li><a href="/cookie-policy" class="text-link text-link-sm">Cookie Policy</a></li>

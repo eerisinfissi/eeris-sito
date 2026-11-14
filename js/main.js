@@ -170,19 +170,15 @@
 
   /* ==========================================================================
      MODULO PREVENTIVO
-     Invio tramite Netlify Forms (POST multipart alla pagina "/").
+     Invio tramite Netlify Forms (POST alla pagina "/").
+     Ogni invio riceve un codice richiesta (es. EER-261114-K7Q4) mostrato al cliente
+     e inviato insieme ai dati, così si ritrova nell'email e nel pannello Netlify.
      Le notifiche email si configurano nel pannello Netlify: vedi README.md.
      ========================================================================== */
   var form = $('#quote-form');
   if (!form) return;
 
   var CONFIG = {
-    maxFiles: 5,
-    maxFileMb: 8,
-    // Netlify accetta richieste fino a circa 8 MB in totale: le foto vengono
-    // ridimensionate nel browser e il totale è mantenuto sotto questa soglia.
-    maxTotalMb: 7.2,
-    maxImageSide: 2000,
     maxItems: 20,
     configMaterials: ['Alluminio', 'PVC'],
     productOptions: ['Infissi'],
@@ -194,7 +190,6 @@
     email: 'Inserisci un indirizzo email valido.',
     telefono: 'Inserisci un numero di telefono valido.',
     tipologia: 'Seleziona almeno una tipologia di lavoro.',
-    descrizione: 'Descrivi il lavoro richiesto con qualche dettaglio in più.',
     consenso: 'Per inviare la richiesta è necessario il consenso al trattamento dei dati.',
     product: 'Seleziona la tipologia.',
     color: 'Seleziona il colore.',
@@ -205,7 +200,7 @@
 
   var isLocalPreview = location.protocol === 'file:' || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
 
-  var state = { configs: {}, files: [], submitted: false, nextId: 1 };
+  var state = { configs: {}, submitted: false, nextId: 1 };
   CONFIG.configMaterials.forEach(function (m) { state.configs[m] = [newItem()]; });
 
   function newItem() {
@@ -221,7 +216,8 @@
     descrizione: $('#f-descrizione'), consenso: $('#f-consenso'),
     tipologia: $('#f-tipologia'), tipologiaValue: $('#f-tipologia-value'), configValue: $('#f-config-value'),
     configurators: $('#configurators'),
-    fileInput: $('#f-foto'), drop: $('#drop'), dropButton: $('#drop-button'), fileList: $('#file-list'), fileErr: $('#f-foto-err'),
+    subject: $('#f-subject'), codice: $('#f-codice'),
+    codeBox: $('#request-code-box'), codeValue: $('#request-code'), codeWa: $('#request-code-wa'),
     submitBtn: $('#submit-btn'), submitErr: $('#submit-error'),
     success: $('#form-success'), devNote: $('#dev-note'), resetBtn: $('#form-reset'), card: $('#quote-card')
   };
@@ -229,7 +225,19 @@
 
   /* ----- utilità ----- */
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  function fmtSize(bytes) { return bytes < 1024 * 1024 ? Math.round(bytes / 1024) + ' KB' : (bytes / 1024 / 1024).toFixed(1).replace('.', ',') + ' MB'; }
+
+  // Codice richiesta: EER-AAMMGG-XXXX (4 caratteri casuali, senza lettere ambigue come O/0 o I/1)
+  function makeRequestCode() {
+    var alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    var rnd = new Uint32Array(4);
+    if (window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(rnd);
+    else for (var r = 0; r < 4; r++) rnd[r] = Math.floor(Math.random() * 4294967296);
+    var suffix = '';
+    for (var i = 0; i < 4; i++) suffix += alphabet[rnd[i] % alphabet.length];
+    var d = new Date();
+    var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    return 'EER-' + String(d.getFullYear()).slice(2) + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' + suffix;
+  }
   function selectedTypes() { return typeBoxes.filter(function (b) { return b.checked; }).map(function (b) { return b.value; }); }
   function activeMaterials() { var t = selectedTypes(); return CONFIG.configMaterials.filter(function (m) { return t.indexOf(m) !== -1; }); }
 
@@ -250,7 +258,6 @@
       return /^[+\d][\d\s.\-/()]*$/.test(v) && digits.length >= 6 && digits.length <= 15 ? '' : MSG.telefono;
     },
     tipologia: function () { return selectedTypes().length ? '' : MSG.tipologia; },
-    descrizione: function () { return el.descrizione.value.trim().length >= 15 ? '' : MSG.descrizione; },
     consenso: function () { return el.consenso.checked ? '' : MSG.consenso; }
   };
   function checkField(name) {
@@ -260,7 +267,7 @@
     return !msg;
   }
 
-  ['nome', 'email', 'telefono', 'descrizione'].forEach(function (name) {
+  ['nome', 'email', 'telefono'].forEach(function (name) {
     el[name].addEventListener('blur', function () { if (el[name].value.trim() || state.submitted) checkField(name); });
     el[name].addEventListener('input', function () { if (el[name].closest('.field').classList.contains('is-invalid')) checkField(name); });
   });
@@ -428,86 +435,6 @@
     return lines.join('\n');
   }
 
-  /* ----- foto: selezione, ridimensionamento, anteprima ----- */
-  function totalBytes() { return state.files.reduce(function (s, f) { return s + f.blob.size; }, 0); }
-
-  function compressImage(file) {
-    if (typeof createImageBitmap !== 'function') return Promise.resolve(null);
-    return createImageBitmap(file).then(function (bmp) {
-      var scale = Math.min(1, CONFIG.maxImageSide / Math.max(bmp.width, bmp.height));
-      var canvas = document.createElement('canvas');
-      canvas.width = Math.round(bmp.width * scale);
-      canvas.height = Math.round(bmp.height * scale);
-      canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
-      if (bmp.close) bmp.close();
-      return new Promise(function (resolve) { canvas.toBlob(resolve, 'image/jpeg', 0.82); });
-    }).catch(function () { return null; }); // es. HEIC non decodificabile nel browser
-  }
-
-  function addFiles(fileList) {
-    var incoming = Array.prototype.slice.call(fileList);
-    var rejected = [];
-    var chain = Promise.resolve();
-    el.fileErr.hidden = true;
-    incoming.forEach(function (file) {
-      chain = chain.then(function () {
-        var isImage = /^image\//.test(file.type) || /\.(heic|heif)$/i.test(file.name);
-        if (!isImage) { rejected.push(file.name + ': non è un\'immagine'); return; }
-        if (state.files.length >= CONFIG.maxFiles) { rejected.push(file.name + ': massimo ' + CONFIG.maxFiles + ' foto'); return; }
-        if (file.size > CONFIG.maxFileMb * 1024 * 1024) { rejected.push(file.name + ': supera ' + CONFIG.maxFileMb + ' MB'); return; }
-        return compressImage(file).then(function (out) {
-          var blob = file, name = file.name;
-          if (out && (out.size < file.size || !/jpe?g$/i.test(file.type.split('/')[1] || ''))) {
-            blob = out;
-            name = file.name.replace(/\.[^.]+$/, '') + '.jpg';
-          }
-          if (totalBytes() + blob.size > CONFIG.maxTotalMb * 1024 * 1024) {
-            rejected.push(file.name + ': dimensione totale delle foto troppo elevata');
-            return;
-          }
-          state.files.push({ blob: blob, name: name, url: URL.createObjectURL(blob) });
-        });
-      });
-    });
-    return chain.then(function () {
-      renderFiles();
-      if (rejected.length) {
-        el.fileErr.innerHTML = 'Alcuni file non sono stati aggiunti (sono ammesse solo immagini, fino a ' + CONFIG.maxFiles + ' foto da massimo ' + CONFIG.maxFileMb + ' MB ciascuna):<br>' + rejected.map(esc).join('<br>');
-        el.fileErr.hidden = false;
-      }
-    });
-  }
-
-  function renderFiles() {
-    el.fileList.innerHTML = state.files.map(function (f, i) {
-      return '<li class="file"><img src="' + f.url + '" alt="" onerror="this.style.visibility=\'hidden\'">' +
-        '<span class="file-name">' + esc(f.name) + '</span><span class="file-size">' + fmtSize(f.blob.size) + '</span>' +
-        '<button type="button" class="file-remove" data-index="' + i + '" aria-label="Rimuovi ' + esc(f.name) + '"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></li>';
-    }).join('');
-    var full = state.files.length >= CONFIG.maxFiles;
-    el.dropButton.disabled = full;
-    el.dropButton.textContent = full ? 'Hai raggiunto il numero massimo di foto' : 'Scegli le foto o trascinale qui';
-  }
-
-  el.dropButton.addEventListener('click', function () { el.fileInput.click(); });
-  el.fileInput.addEventListener('change', function () { addFiles(el.fileInput.files).then(function () { el.fileInput.value = ''; }); });
-  el.fileList.addEventListener('click', function (e) {
-    var btn = e.target.closest('.file-remove');
-    if (!btn) return;
-    var f = state.files.splice(Number(btn.dataset.index), 1)[0];
-    if (f) URL.revokeObjectURL(f.url);
-    el.fileErr.hidden = true;
-    renderFiles();
-    el.dropButton.focus();
-  });
-  ['dragenter', 'dragover'].forEach(function (t) {
-    el.drop.addEventListener(t, function (e) { e.preventDefault(); el.drop.classList.add('is-dragover'); });
-  });
-  ['dragleave', 'drop'].forEach(function (t) {
-    el.drop.addEventListener(t, function (e) { e.preventDefault(); el.drop.classList.remove('is-dragover'); });
-  });
-  el.drop.addEventListener('drop', function (e) { if (e.dataTransfer && e.dataTransfer.files.length) addFiles(e.dataTransfer.files); });
-
   /* ----- invio ----- */
   function setSending(sending) {
     el.submitBtn.disabled = sending;
@@ -519,7 +446,12 @@
     icon.style.display = sending ? 'none' : '';
   }
 
-  function showSuccess() {
+  function showSuccess(code) {
+    if (code) {
+      el.codeValue.textContent = code;
+      el.codeWa.href = 'https://wa.me/393382906931?text=' + encodeURIComponent('Buongiorno, vi scrivo per la richiesta di preventivo ' + code + '.');
+      el.codeBox.hidden = false;
+    }
     form.hidden = true;
     el.success.hidden = false;
     el.devNote.hidden = !isLocalPreview;
@@ -538,7 +470,7 @@
     renderConfigurators(); // mostra gli eventuali errori del configuratore
     var cfgInvalid = configsValid();
     if (cfgInvalid && !firstInvalid) firstInvalid = document.getElementById(cfgInvalid);
-    ['descrizione', 'consenso'].forEach(function (n) { if (!checkField(n) && !firstInvalid) firstInvalid = el[n]; });
+    ['consenso'].forEach(function (n) { if (!checkField(n) && !firstInvalid) firstInvalid = el[n]; });
 
     if (firstInvalid) {
       firstInvalid.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'center' });
@@ -548,23 +480,28 @@
 
     el.tipologiaValue.value = selectedTypes().join(', ');
     el.configValue.value = buildSummary();
+    var code = makeRequestCode();
+    el.codice.value = code;
+    el.subject.value = 'Nuova richiesta di preventivo ' + code + ' dal sito EERIS';
 
     var data = new FormData(form);
-    for (var i = 1; i <= CONFIG.maxFiles; i++) data.delete('foto_' + i);
-    state.files.forEach(function (f, idx) { data.append('foto_' + (idx + 1), f.blob, f.name); });
 
     if (isLocalPreview) {
       // In locale Netlify Forms non è disponibile: si mostra il riepilogo in console.
       var preview = {};
-      data.forEach(function (v, k) { preview[k] = v instanceof Blob ? v.name + ' (' + fmtSize(v.size) + ')' : v; });
+      data.forEach(function (v, k) { preview[k] = v; });
       console.info('[Anteprima locale] Dati che verrebbero inviati a Netlify:', preview);
-      showSuccess();
+      showSuccess(code);
       return;
     }
 
     setSending(true);
-    fetch('/', { method: 'POST', body: data })
-      .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); showSuccess(); })
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(data).toString()
+    })
+      .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); showSuccess(code); })
       .catch(function () {
         el.submitErr.innerHTML = MSG.submit;
         el.submitErr.hidden = false;
@@ -576,18 +513,16 @@
   el.resetBtn.addEventListener('click', function () {
     form.reset();
     state.submitted = false;
-    state.files.forEach(function (f) { URL.revokeObjectURL(f.url); });
-    state.files = [];
     CONFIG.configMaterials.forEach(function (m) { state.configs[m] = [newItem()]; });
     $$('.is-invalid', form).forEach(function (n) { n.classList.remove('is-invalid'); });
     $$('.error', form).forEach(function (n) { n.hidden = true; });
     $$('[aria-invalid]', form).forEach(function (n) { n.removeAttribute('aria-invalid'); });
-    renderFiles();
     renderConfigurators();
     el.success.hidden = true;
+    el.codeBox.hidden = true;
+    el.codice.value = '';
     form.hidden = false;
     el.nome.focus();
   });
 
-  renderFiles();
 })();

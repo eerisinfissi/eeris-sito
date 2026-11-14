@@ -565,40 +565,14 @@ main:focus { outline: none; }
 .config-add { align-self: flex-start; }
 .config-limit { font-size: 13px; color: var(--text-soft); }
 
-/* Upload foto */
-.drop {
-  position: relative; display: flex; align-items: center; gap: 16px;
-  padding: 18px 20px; border: 1.5px dashed rgba(35, 36, 39, .28); border-radius: var(--radius);
-  background: rgba(35, 36, 39, .025);
-  transition: border-color .2s ease, background-color .2s ease;
+/* Suggerimento foto sotto la descrizione */
+.form-tip {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px; border-radius: var(--radius);
+  background: rgba(35, 36, 39, .04); font-size: 14px; line-height: 1.5; color: var(--text-soft);
 }
-.drop.is-dragover { border-color: var(--accent); background: #fdeeee; }
-.drop-icon {
-  display: inline-flex; align-items: center; justify-content: center; flex: none;
-  width: 46px; height: 46px; border-radius: 50%;
-  background: var(--white); border: 1px solid var(--line); color: var(--accent);
-}
-.drop-button {
-  padding: 0; border: 0; background: none; text-align: left;
-  font-size: 15px; font-weight: 700;
-  text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 4px;
-}
-.drop .hint { margin-top: 4px; }
-.files { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-.files:empty { display: none; }
-.file {
-  display: flex; align-items: center; gap: 12px;
-  padding: 8px 8px 8px 8px; border-radius: 10px; background: rgba(35, 36, 39, .05); font-size: 14px;
-}
-.file img { width: 40px; height: 40px; flex: none; object-fit: cover; border-radius: 6px; background: var(--light); }
-.file-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
-.file-size { flex: none; color: var(--text-soft); }
-.file-remove {
-  display: inline-flex; align-items: center; justify-content: center; flex: none;
-  width: 34px; height: 34px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--text-soft);
-  transition: background-color .2s ease, color .2s ease;
-}
-.file-remove:hover { background: rgba(35, 36, 39, .1); color: var(--text); }
+.form-tip .icon { flex: none; margin-top: 2px; }
+.form-tip a { color: var(--text); font-weight: 600; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
 
 /* Consenso */
 .consent { display: flex; align-items: flex-start; gap: 14px; }
@@ -620,10 +594,24 @@ main:focus { outline: none; }
 .success { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; padding: 32px 0; }
 .success:focus { outline: none; }
 .success .btn { margin-top: 12px; }
+
+/* Codice richiesta mostrato dopo l'invio */
+.request-code {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+  width: 100%; padding: 20px 22px; border: 1.5px dashed var(--accent); border-radius: var(--radius);
+  background: #fdeeee;
+}
+.request-code-label { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-text); }
+.request-code-value {
+  font-family: var(--font-head); font-size: clamp(24px, 4vw, 32px); font-weight: 800; letter-spacing: .04em;
+  color: var(--text); user-select: all;
+}
+.request-code .small a { color: var(--text); font-weight: 600; }
+.request-code .btn { margin-top: 4px; }
 .dev-note { padding: 12px 16px; border-radius: 10px; background: #fff6d6; font-size: 14px; }
 
 /* 9. FOOTER */
-.site-footer { padding: 96px 0 40px; background: var(--black); color: var(--white); --text-soft: rgba(255, 255, 255, .7); }
+.site-footer { padding: 96px 0 104px; /* 104px: spazio per il pulsante WhatsApp flottante */ background: var(--black); color: var(--white); --text-soft: rgba(255, 255, 255, .7); }
 .footer-top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 2fr) minmax(0, 2.5fr) minmax(0, 2.5fr); gap: 56px; }
 .footer-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
 .footer-brand p { max-width: 380px; color: var(--text-soft); }
@@ -635,6 +623,7 @@ main:focus { outline: none; }
 }
 .footer-bottom .small { color: rgba(255, 255, 255, .7); font-size: 14px; }
 .legal-links { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+.footer-bottom p a { text-decoration: underline; text-underline-offset: 3px; }
 
 /* 10. LIGHTBOX */
 .lightbox {
