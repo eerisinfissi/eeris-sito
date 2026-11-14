@@ -185,8 +185,9 @@
   var CONFIG = {
     maxItems: 20,
     configMaterials: ['Alluminio', 'PVC'],
-    productOptions: ['Infissi'],
-    colorOptions: ['Bianco', 'Effetto legno'],
+    productOptions: ['Finestra', 'Portafinestra'],
+    colorOptions: ['Bianco', 'Effetto legno', 'RAL'],
+    maxQty: 30,
     summaryTitle: 'Richiesta preventivo – Configurazione infissi'
   };
   var MSG = {
@@ -316,10 +317,15 @@
     });
   });
 
-  function selectHtml(id, field, label, options, value, err) {
-    var opts = '<option value="" disabled' + (value ? '' : ' selected') + '>Scegli</option>' +
+  function qtyOptions() {
+    var list = [];
+    for (var q = 1; q <= CONFIG.maxQty; q++) list.push(String(q));
+    return list;
+  }
+  function selectHtml(id, field, label, options, value, err, extraClass) {
+    var opts = (value ? '' : '<option value="" disabled selected>Scegli</option>') +
       options.map(function (o) { return '<option' + (o === value ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('');
-    return '<div class="field' + (err ? ' is-invalid' : '') + '">' +
+    return '<div class="field' + (extraClass ? ' ' + extraClass : '') + (err ? ' is-invalid' : '') + '">' +
       '<label class="label" for="' + id + '">' + label + '<span class="req" aria-hidden="true"> *</span></label>' +
       '<div class="select-wrap"><select class="control" id="' + id + '" data-field="' + field + '" required' + (err ? ' aria-invalid="true"' : '') + ' aria-describedby="' + id + '-err">' + opts + '</select>' +
       '<svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></div>' +
@@ -338,7 +344,7 @@
     if (!item.product) e.product = MSG.product;
     if (!item.color) e.color = MSG.color;
     ['width', 'height'].forEach(function (k) { var n = Number(item[k]); if (!(n >= 1 && n <= 2000 && Number.isInteger(n))) e[k] = MSG.measure; });
-    var q = Number(item.qty); if (!(q >= 1 && q <= 999 && Number.isInteger(q))) e.qty = MSG.qty;
+    var q = Number(item.qty); if (!(q >= 1 && q <= CONFIG.maxQty && Number.isInteger(q))) e.qty = MSG.qty;
     return e;
   }
 
@@ -361,7 +367,7 @@
             '</div><div class="config-triple">' +
             numberHtml(p + '-width', 'width', 'Larghezza', item.width, err.width, 'cm') +
             numberHtml(p + '-height', 'height', 'Altezza', item.height, err.height, 'cm') +
-            numberHtml(p + '-qty', 'qty', 'Quantità', item.qty, err.qty, '', 'config-qty') +
+            selectHtml(p + '-qty', 'qty', 'Quantità', qtyOptions(), item.qty, err.qty, 'config-qty') +
             '</div></div></div>';
         }).join('') + '</div>' +
         (full ? '<p class="config-limit">Hai raggiunto il numero massimo di infissi per questo materiale.</p>'

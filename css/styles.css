@@ -453,7 +453,27 @@ main:focus { outline: none; }
 /* Contatti */
 .section-accent { padding: 120px 0; }
 /* Showroom */
-.showroom-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); align-items: center; gap: 80px; }
+.showroom-grid {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 56px 80px;
+  grid-template-areas: "photo info" "photo hours";
+}
+.showroom-info { grid-area: info; }
+.showroom-hours { grid-area: hours; }
+.showroom-photo { grid-area: photo; position: sticky; top: calc(var(--header-h, 80px) + 32px); align-self: start; margin: 0; }
+.showroom-photo img {
+  display: block; width: 100%; height: auto; border-radius: var(--radius);
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .6);
+}
+.showroom-photo::before {
+  content: ""; position: absolute; left: 0; top: -10px; width: 96px; height: 4px; background: var(--accent); border-radius: 2px;
+}
+.showroom-photo-tag {
+  position: absolute; left: 16px; bottom: 16px; display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 14px; border-radius: 999px; background: rgba(22, 23, 26, .78);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  color: var(--white); font-size: 13px; font-weight: 600;
+}
+.showroom-photo-tag .icon { color: var(--accent); width: 16px; height: 16px; }
 .showroom-info .eyebrow { margin-bottom: 20px; }
 .showroom-info .lead { margin-top: 24px; max-width: 560px; }
 .showroom-address { display: flex; align-items: flex-start; gap: 14px; margin-top: 36px; }
@@ -726,7 +746,8 @@ main:focus { outline: none; }
 
   .section-accent { padding: 96px 0; }
   .contact-grid { grid-template-columns: 1fr; gap: 48px; }
-  .showroom-grid { grid-template-columns: 1fr; gap: 48px; }
+  .showroom-grid { grid-template-columns: 1fr; gap: 40px; grid-template-areas: "info" "photo" "hours"; }
+  .showroom-photo { position: relative; top: auto; max-width: 520px; }
   .contact-box { padding: 40px 0 0; border-left: 0; border-top: 1px solid var(--line); }
 
   .footer-top { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 48px 40px; }
