@@ -23,6 +23,9 @@
 
 /* 2. VARIABILI (palette originale EERIS) */
 :root {
+  /* Altezza riservata alla scritta "Powered by Netlify" su mobile. Se passi a un piano
+     Netlify a pagamento e spegni la scritta, metti 0px. */
+  --badge-space: 56px;
   --white: #ffffff;
   --light: #f4f4f5;
   --accent: #ef454b;
@@ -295,7 +298,8 @@ main:focus { outline: none; }
 .quick-bar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 980;
   display: none; align-items: center; gap: 10px;
-  padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+  /* spazio in basso per la scritta "Powered by Netlify" (piano gratuito) */
+  padding: 10px 14px calc(10px + var(--badge-space) + env(safe-area-inset-bottom, 0px));
   background: rgba(255, 255, 255, .96);
   -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
   border-top: 1px solid var(--line);
@@ -305,7 +309,8 @@ main:focus { outline: none; }
 .quick-bar .btn { flex: 1; min-width: 0; height: 50px; padding: 0 12px; font-size: 12px; letter-spacing: .04em; overflow: hidden; text-overflow: ellipsis; }
 
 .whatsapp-float {
-  position: fixed; right: 26px; bottom: 26px; z-index: 980;
+  /* a sinistra: in basso a destra c'è la scritta "Powered by Netlify" */
+  position: fixed; left: 26px; bottom: 26px; z-index: 980;
   display: inline-flex; align-items: center; gap: 10px;
   height: 54px; padding: 0 22px 0 18px;
   border: 1px solid rgba(22, 23, 26, .1); border-radius: 999px;
@@ -660,7 +665,7 @@ main:focus { outline: none; }
 
 /* 12. RESPONSIVE */
 @media (max-width: 1420px) {
-  .whatsapp-float { right: 18px; bottom: 18px; width: 54px; padding: 0; justify-content: center; }
+  .whatsapp-float { left: 18px; bottom: 18px; width: 54px; padding: 0; justify-content: center; }
   .whatsapp-float-label { display: none; }
 }
 @media (max-width: 1200px) {
@@ -712,7 +717,7 @@ main:focus { outline: none; }
   .header-cta { display: none; }
   .quick-bar { display: flex; }
   .whatsapp-float { display: none; }
-  body { padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)); }
+  body { padding-bottom: calc(70px + var(--badge-space) + env(safe-area-inset-bottom, 0px)); }
 
   .section { padding: 72px 0 80px; }
   .lead { font-size: 17px; }
