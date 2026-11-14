@@ -1,0 +1,8 @@
+{
+  "name": "eeris-sito",
+  "private": true,
+  "description": "Sito statico EERIS. Le dipendenze servono solo alla funzione Netlify che invia la conferma email al cliente.",
+  "dependencies": {
+    "nodemailer": "^6.9.16"
+  }
+}

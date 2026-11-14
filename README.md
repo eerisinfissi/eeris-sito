@@ -116,3 +116,12 @@ Dopo aver acquistato il dominio, per esempio `eeris.it`:
 
 - **Privacy Policy** (`privacy-policy.html`): completata (sede, P.IVA, email, conservazione 12 mesi). Fai verificare il testo da un consulente se possibile.
 - Le foto della galleria sono segnalate come «a scopo illustrativo»: quando avrai le foto dei tuoi lavori, sostituiscile e rimuovi la nota da `index.html`.
+
+## 7. Email di conferma al cliente
+
+Dopo ogni richiesta, la funzione `netlify/functions/conferma-cliente.mjs` manda al cliente un'email da info@eerisinfissi.it con il suo **codice richiesta**. Usa il server di posta di Google Workspace e due variabili d'ambiente su Netlify (*Project configuration → Environment variables*):
+
+- `SMTP_USER` = `info@eerisinfissi.it` (già impostata)
+- `SMTP_PASS` = una **password per le app** di Google dell'account info@ (da creare su myaccount.google.com/apppasswords, con la verifica in due passaggi attiva). Va inserita a mano dal titolare, segnandola come segreta.
+
+Senza `SMTP_PASS` la funzione non invia nulla: le richieste arrivano comunque a info@. Dopo aver cambiato le variabili serve un nuovo deploy (*Deploys → Trigger deploy*).
