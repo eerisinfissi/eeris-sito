@@ -76,7 +76,7 @@
       <nav class="main-nav" aria-label="Menu principale">
         <a href="#home" class="nav-link">Home</a>
         <a href="#servizi" class="nav-link">Servizi</a>
-        <a href="#lavori" class="nav-link">Lavori</a>
+        <a href="#lavori" class="nav-link" hidden>Lavori</a>
         <a href="#chi-siamo" class="nav-link">Chi siamo</a>
         <a href="#contatti" class="nav-link">Contatti</a>
       </nav>
@@ -97,7 +97,7 @@
       <nav class="mobile-nav" aria-label="Menu mobile">
         <a href="#home">Home</a>
         <a href="#servizi">Servizi</a>
-        <a href="#lavori">Lavori</a>
+        <a href="#lavori" hidden>Lavori</a>
         <a href="#chi-siamo">Chi siamo</a>
         <a href="#preventivo">Preventivo</a>
         <a href="#contatti">Contatti</a>
@@ -238,8 +238,10 @@
       </div>
     </section>
 
-    <!-- ============ LAVORI ============ -->
-    <section class="section section-dark" id="lavori" aria-labelledby="lavori-title">
+    <!-- ============ LAVORI (ARCHIVIATA) ============
+         Sezione nascosta su richiesta, non eliminata. Per rimetterla online togli
+         l'attributo "hidden" qui sotto e dai link "Lavori" nei menu e nel footer. -->
+    <section class="section section-dark" id="lavori" aria-labelledby="lavori-title" hidden>
       <div class="container">
         <div class="section-head reveal">
           <div class="section-head-main">
@@ -549,7 +551,7 @@
           <ul class="footer-list">
             <li><a href="#home" class="text-link text-link-sm">Home</a></li>
             <li><a href="#servizi" class="text-link text-link-sm">Servizi</a></li>
-            <li><a href="#lavori" class="text-link text-link-sm">Lavori</a></li>
+            <li hidden><a href="#lavori" class="text-link text-link-sm">Lavori</a></li>
             <li><a href="#chi-siamo" class="text-link text-link-sm">Chi siamo</a></li>
             <li><a href="#preventivo" class="text-link text-link-sm">Preventivo</a></li>
             <li><a href="#contatti" class="text-link text-link-sm">Contatti</a></li>
