@@ -608,6 +608,7 @@ main:focus { outline: none; }
 }
 .request-code .small a { color: var(--text); font-weight: 600; }
 .request-code .btn { margin-top: 4px; }
+.request-code-spam { padding: 10px 14px; border-radius: 10px; background: #fff6d6; color: var(--text); }
 .dev-note { padding: 12px 16px; border-radius: 10px; background: #fff6d6; font-size: 14px; }
 
 /* 9. FOOTER */
