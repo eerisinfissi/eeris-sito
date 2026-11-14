@@ -13,6 +13,10 @@
   /* ---------- Anno nel footer ---------- */
   $$('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
 
+  /* ---------- Showroom: evidenzia il giorno di oggi negli orari ---------- */
+  var todayRow = document.querySelector('.hours-row[data-day="' + new Date().getDay() + '"]');
+  if (todayRow) todayRow.classList.add('is-today');
+
   /* ---------- Header: ombra allo scroll ---------- */
   var header = $('#site-header');
   if (header) {

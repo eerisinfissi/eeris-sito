@@ -452,6 +452,35 @@ main:focus { outline: none; }
 
 /* Contatti */
 .section-accent { padding: 120px 0; }
+/* Showroom */
+.showroom-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); align-items: center; gap: 80px; }
+.showroom-info .eyebrow { margin-bottom: 20px; }
+.showroom-info .lead { margin-top: 24px; max-width: 560px; }
+.showroom-address { display: flex; align-items: flex-start; gap: 14px; margin-top: 36px; }
+.showroom-address .icon { flex: none; margin-top: 2px; }
+.showroom-address address { font-style: normal; font-size: 18px; line-height: 1.55; }
+.showroom-info .btn-row { margin-top: 36px; }
+.showroom-hours {
+  padding: 36px 36px 30px; border-radius: var(--radius);
+  background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .14);
+}
+.showroom-hours-title { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.hours { margin: 0; }
+.hours-row {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;
+  padding: 13px 12px; margin: 0 -12px; border-bottom: 1px solid rgba(255, 255, 255, .12); border-radius: 8px;
+}
+.hours-row:last-child { border-bottom: 0; }
+.hours dt { font-weight: 600; }
+.hours dd { margin: 0; text-align: right; color: rgba(255, 255, 255, .82); font-variant-numeric: tabular-nums; line-height: 1.5; }
+.hours-closed { color: rgba(255, 255, 255, .5); }
+.hours-row.is-today { background: rgba(239, 69, 75, .16); border-bottom-color: transparent; }
+.hours-row.is-today dt::after {
+  content: "Oggi"; display: inline-block; margin-left: 10px; padding: 2px 8px; border-radius: 999px;
+  background: var(--accent); color: var(--white); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; vertical-align: 2px;
+}
+.hours-note { margin-top: 16px; }
+
 .contact-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: end; gap: 80px; }
 .contact-text { max-width: 420px; margin-top: 20px; }
 .contact-box { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding-left: 56px; border-left: 1px solid var(--line); }
@@ -697,6 +726,7 @@ main:focus { outline: none; }
 
   .section-accent { padding: 96px 0; }
   .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+  .showroom-grid { grid-template-columns: 1fr; gap: 48px; }
   .contact-box { padding: 40px 0 0; border-left: 0; border-top: 1px solid var(--line); }
 
   .footer-top { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 48px 40px; }
@@ -759,6 +789,7 @@ main:focus { outline: none; }
   .lightbox { padding: 68px 12px 20px; }
 }
 @media (max-width: 520px) {
+  .showroom-hours { padding: 26px 22px 20px; }
   /* i pulsanti lunghi vanno a capo invece di allargare la pagina */
   .btn { height: auto; min-height: 52px; padding: 12px 22px; white-space: normal; line-height: 1.25; }
   .btn-sm { min-height: 42px; padding: 8px 18px; }
