@@ -71,7 +71,7 @@ Il modulo usa **Netlify Forms**, che Netlify rileva da solo al primo deploy graz
 2. Apri **Site configuration → Notifications → Emails and webhooks → Form submission notifications → Add notification → Email notification**.
 3. Imposta:
    - *Event to listen for*: **New form submission**
-   - *Email to notify*: **eeris.tre@gmail.com**
+   - *Email to notify*: **info@eerisinfissi.it**
    - *Form*: **preventivo**
 4. Salva e fai un **invio di prova** dal sito pubblicato.
 
